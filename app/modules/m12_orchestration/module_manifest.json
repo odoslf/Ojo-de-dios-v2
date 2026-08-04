@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "module_number": 12,
+  "module_id": "m12_orchestration",
+  "slug": "orchestration",
+  "display_name": "Orquestación X5 + IA + Hermes Agent Lab",
+  "description": "X5, LaIA/Mistral, Hermes Agent, DeepSeek-assisted planning and controlled promotion.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/12_ORCHESTRATION_X5_AI_HERMES.md",
+  "workspace_path": "storage/workspaces/m12_orchestration",
+  "notes": [],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_IMPLEMENTED",
+    "documented_technique_count": 4,
+    "implemented_technique_count": 1,
+    "ready_technique_count": 1,
+    "local_ai_technique_count": 0,
+    "implementation_statuses": [
+      "READY_CONTROLLED"
+    ],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

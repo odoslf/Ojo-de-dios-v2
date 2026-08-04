@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "module_number": 15,
+  "module_id": "m15_cloud",
+  "slug": "cloud",
+  "display_name": "Cloud / Containers / Kubernetes",
+  "description": "Cloud, container and Kubernetes workflows that distinguish read-only from mutation modes.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/15_CLOUD.md",
+  "workspace_path": "storage/workspaces/m15_cloud",
+  "notes": [],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_IMPLEMENTED",
+    "documented_technique_count": 15,
+    "implemented_technique_count": 4,
+    "ready_technique_count": 4,
+    "local_ai_technique_count": 0,
+    "implementation_statuses": [
+      "READY_CONTROLLED"
+    ],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

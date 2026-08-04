@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "module_number": 18,
+  "module_id": "m18_honeypots_deception",
+  "slug": "honeypots-deception",
+  "display_name": "Sistema de Señuelos y Análisis de Intrusiones",
+  "description": "Reserved laboratory for honeypots, deception, passive intrusion profiling, indicators of compromise and approved response workflows.",
+  "lifecycle": "reserved",
+  "readiness": "reserved_future_module",
+  "official": false,
+  "reserved": true,
+  "requires_user_definition": true,
+  "doc_path": null,
+  "workspace_path": "storage/workspaces/m18_honeypots_deception",
+  "notes": [
+    "Reserved module: definition provided by operator; no executable techniques, tools or workers are implied yet."
+  ],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_IMPLEMENTED",
+    "documented_technique_count": 0,
+    "implemented_technique_count": 3,
+    "ready_technique_count": 3,
+    "local_ai_technique_count": 0,
+    "implementation_statuses": [
+      "READY_CONTROLLED"
+    ],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

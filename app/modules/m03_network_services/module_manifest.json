@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "module_number": 3,
+  "module_id": "m03_network_services",
+  "slug": "network-services",
+  "display_name": "Explotación servicios de red",
+  "description": "Network service fingerprinting and mapping to registered techniques.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/03_NETWORK_EXPLOITATION.md",
+  "workspace_path": "storage/workspaces/m03_network_services",
+  "notes": [],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_IMPLEMENTED",
+    "documented_technique_count": 75,
+    "implemented_technique_count": 3,
+    "ready_technique_count": 3,
+    "local_ai_technique_count": 0,
+    "implementation_statuses": [
+      "READY_CONTROLLED"
+    ],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

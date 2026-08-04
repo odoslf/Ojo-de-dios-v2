@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "module_number": 1,
+  "module_id": "m01_osint",
+  "slug": "osint",
+  "display_name": "OSINT",
+  "description": "Open-source intelligence intake for domains, IPs, ranges, emails, people and companies.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/01_OSINT.md",
+  "workspace_path": "storage/workspaces/m01_osint",
+  "notes": [],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_IMPLEMENTED",
+    "documented_technique_count": 47,
+    "implemented_technique_count": 47,
+    "ready_technique_count": 47,
+    "local_ai_technique_count": 0,
+    "implementation_statuses": [
+      "READY_CONTROLLED"
+    ],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

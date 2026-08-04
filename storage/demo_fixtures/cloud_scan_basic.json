@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "cloud_scan",
+  "summary": "Local demo cloud scan summary with placeholder resources only.",
+  "items": []
+}

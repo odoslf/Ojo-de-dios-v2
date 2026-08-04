@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Chat LaIA · Ojo de Dios{% endblock %}
+{% block page_heading %}Chat local con LaIA{% endblock %}
+
+{% block content %}
+<section class="hero-card chat-hero">
+  <div>
+    <p class="eyebrow">LaIA local</p>
+    <h1>Chat con LaIA</h1>
+    <p class="lead">Conversa con el modelo local Mistral/Ollama mediante el endpoint seguro de LaIA. El chat no ejecuta módulos, no lanza técnicas y no llama a IA externa.</p>
+    <div class="hero-actions" aria-label="Acciones de chat">
+      <a class="primary-action" href="#laia-chat-input">Escribir mensaje</a>
+      <a class="secondary-action" href="/api/ops/m16/local-ai/health">Comprobar Mistral</a>
+    </div>
+  </div>
+  <div class="metric-grid" aria-label="Guardrails del chat">
+    <div class="metric"><span>Local</span><small>Backend Mistral/Ollama</small></div>
+    <div class="metric"><span>0</span><small>ejecuciones de módulos</small></div>
+    <div class="metric"><span>0</span><small>llamadas IA externa</small></div>
+    <div class="metric"><span>ON</span><small>redacción básica de secretos</small></div>
+  </div>
+</section>
+
+<section class="card chat-card" aria-labelledby="laia-chat-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow dark">Asistente operativo</p>
+      <h2 id="laia-chat-title">Conversación</h2>
+      <p class="muted">Cada envío incluye <code>execute_local_ai=true</code> y conserva la sesión solo en el navegador durante esta ronda.</p>
+    </div>
+    <span class="status-badge badge-muted" id="laia-chat-status">Listo</span>
+  </div>
+
+  <div id="laia-chat-log" class="chat-log" aria-live="polite" aria-label="Mensajes del chat">
+    <article class="chat-message assistant-message">
+      <strong>LaIA</strong>
+      <p>Estoy lista para ayudarte con revisión defensiva, explicación de módulos y análisis seguro. No ejecutaré técnicas desde este chat.</p>
+    </article>
+  </div>
+
+  <form id="laia-chat-form" class="chat-form" data-chat-endpoint="/api/ai/laia/chat">
+    <label for="laia-chat-input">Mensaje</label>
+    <textarea id="laia-chat-input" name="message" rows="4" maxlength="8000" placeholder="Escribe tu pregunta para LaIA..." required></textarea>
+    <p class="help-text">No pegues secretos reales. Si aparecen claves tipo token/password, el backend intentará redactarlas.</p>
+    <div class="chat-actions">
+      <button type="submit">Enviar a LaIA local</button>
+      <button type="button" class="button-muted" id="laia-chat-clear">Limpiar conversación</button>
+    </div>
+  </form>
+</section>
+<script src="/static/js/laia_chat.js" defer></script>
+{% endblock %}

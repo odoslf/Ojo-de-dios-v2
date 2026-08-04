@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "module_number": 11,
+  "module_id": "m11_iot_physical",
+  "slug": "iot-physical",
+  "display_name": "IoT / físicos",
+  "description": "Device, camera, printer, domotics and physical-device evidence workflows.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/11_IOT_PHYSICAL.md",
+  "workspace_path": "storage/workspaces/m11_iot_physical",
+  "notes": []
+}

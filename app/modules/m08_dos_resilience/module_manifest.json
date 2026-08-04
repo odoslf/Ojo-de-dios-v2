@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "module_number": 8,
+  "module_id": "m08_dos_resilience",
+  "slug": "dos-resilience",
+  "display_name": "DoS / Resiliencia",
+  "description": "Resilience metrics, limits, stop controls and evidence for authorized resilience testing.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/08_DOS_RESILIENCE.md",
+  "workspace_path": "storage/workspaces/m08_dos_resilience",
+  "notes": []
+}

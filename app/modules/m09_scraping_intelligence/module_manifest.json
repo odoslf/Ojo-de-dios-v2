@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "module_number": 9,
+  "module_id": "m09_scraping_intelligence",
+  "slug": "scraping-intelligence",
+  "display_name": "Scraping Inteligente X4 + X5 + IA",
+  "description": "X4 connector, X5 scraping planner, normalization and export workflows.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/09_SCRAPING_INTELLIGENCE.md",
+  "workspace_path": "storage/workspaces/m09_scraping_intelligence",
+  "notes": [],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_IMPLEMENTED",
+    "documented_technique_count": 47,
+    "implemented_technique_count": 9,
+    "ready_technique_count": 9,
+    "local_ai_technique_count": 2,
+    "implementation_statuses": [
+      "READY_CONTROLLED",
+      "READY_LOCAL_AI"
+    ],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

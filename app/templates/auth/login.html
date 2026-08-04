@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Login · Ojo de Dios{% endblock %}
+{% block page_heading %}Login{% endblock %}
+
+{% block content %}
+<section class="hero-card">
+  <div>
+    <p class="eyebrow">AUTH · sesión real</p>
+    <h1>Acceso a Ojo de Dios</h1>
+    <p class="lead">Inicia sesión con un usuario local almacenado en la base de datos. Las contraseñas se verifican con PBKDF2 y la sesión usa cookie HttpOnly.</p>
+  </div>
+</section>
+
+{% if error %}<section class="notice warning-notice" role="alert"><strong>AUTH_FAILED</strong><p>{{ error }}</p></section>{% endif %}
+
+<section class="card">
+  <form method="post" action="/login" class="stacked-form">
+    <label>Usuario <input type="text" name="username" autocomplete="username" required></label>
+    <label>Contraseña <input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="primary-action" type="submit">Entrar</button>
+  </form>
+</section>
+{% endblock %}

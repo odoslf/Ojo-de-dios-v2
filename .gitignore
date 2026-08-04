@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+storage/knowledge/*
+!storage/knowledge/.gitkeep
+storage/runtime/*
+!storage/runtime/.gitkeep
+storage/workspaces/*
+!storage/workspaces/.gitkeep
+
+storage/cache/*
+!storage/cache/.gitkeep
+storage/targets/*
+!storage/targets/.gitkeep

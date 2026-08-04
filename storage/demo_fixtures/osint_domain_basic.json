@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "osint_domain",
+  "summary": "Local demo OSINT summary for example.local without external lookups.",
+  "items": []
+}

@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "hackrf_signal",
+  "summary": "Local demo radio signal summary without hardware access.",
+  "items": []
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Ojo de Dios{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+  <div class="app-shell">
+    <aside class="app-sidebar" aria-label="Navegación de estación">
+      <a class="brand-panel" href="/modules" aria-label="Inicio de Ojo de Dios">
+        <span class="brand-mark">OD</span>
+        <span>
+          <strong>Ojo de Dios</strong>
+          <small>Estación operativa</small>
+        </span>
+      </a>
+
+      <nav class="side-nav" aria-label="Navegación principal">
+        <p class="nav-section-label">Operación</p>
+        <a href="/modules">Dashboard</a>
+        <a href="/targets/new">Objetivos</a>
+        <a href="/chat">Chat LaIA</a>
+        <a href="/modules#module-catalog">Módulos</a>
+        <a href="/modules#techniques">Técnicas</a>
+        <a href="/modules#tools">Herramientas</a>
+        <a href="/modules#workspaces">Workspaces</a>
+        <a href="/modules#runs">Runs</a>
+        <a href="/modules#evidence">Evidencia</a>
+
+        <p class="nav-section-label">Sistema</p>
+        <a href="/ops/m16">Centro M16</a>
+        <a href="/ops/m16/first-run">First-run Windows</a>
+        <a href="/modules#readiness">Readiness M16</a>
+        <a href="/modules#settings">Settings locales</a>
+        <a href="/login">Login</a>
+        <a href="/api/health">API health</a>
+      </nav>
+
+      <div class="sidebar-footer" aria-label="Estado de seguridad">
+        <span class="status-dot"></span>
+        <div>
+          <strong>Modo controlado</strong>
+          <small>Sin ejecución implícita</small>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-frame">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Laboratorio autorizado</p>
+          <strong>{% block page_heading %}Consola local{% endblock %}</strong>
+        </div>
+        <div class="topbar-actions" aria-label="Accesos rápidos">
+          <a class="api-link" href="/api/modules">API módulos</a>
+          <a class="api-link" href="/api/auth/me">Auth JSON</a>
+          <a class="api-link" href="/api/ops/m16/readiness">Readiness JSON</a>
+        </div>
+      </header>
+
+      <main id="main-content" class="site-main" tabindex="-1">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>

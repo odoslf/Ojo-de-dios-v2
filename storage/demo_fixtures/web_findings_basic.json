@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "web_findings",
+  "summary": "Local demo web findings for an internal documentation target.",
+  "items": []
+}

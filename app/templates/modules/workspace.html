@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Workspace {{ module.module_id }} · Ojo de Dios{% endblock %}
+{% block page_heading %}Workspace · {{ module.display_name }}{% endblock %}
+
+{% block content %}
+<section class="module-detail-hero {% if module.reserved %}module-detail-reserved{% endif %}">
+  <div>
+    <p class="eyebrow">Workspace operativo · {{ module.module_id }}</p>
+    <h1>{{ module.display_name }}</h1>
+    <p class="lead">Inspección real del filesystem gestionado para el módulo. El bootstrap crea estructura y manifests; no instala herramientas, no ejecuta técnicas y no marca readiness falso.</p>
+    <div class="hero-actions" aria-label="Acciones de workspace">
+      <a class="secondary-action" href="/modules/{{ module.module_id }}">Volver al módulo</a>
+      <a class="secondary-action" href="/api/modules/{{ module.module_id }}/workspace/state">Workspace JSON</a>
+    </div>
+  </div>
+  <div class="module-detail-metrics" aria-label="Resumen de workspace">
+    <div class="metric"><span>{{ "sí" if workspace_state.workspace_exists else "no" }}</span><small>workspace existe</small></div>
+    <div class="metric"><span>{{ "sí" if workspace_state.manifest_exists else "no" }}</span><small>manifest existe</small></div>
+    <div class="metric"><span>{{ workspace_state.tool_count }}</span><small>tool workspaces</small></div>
+    <div class="metric"><span>{{ workspace_state.run_count }}</span><small>runs</small></div>
+  </div>
+</section>
+
+{% if bootstrap_result %}
+<section class="notice success-notice" aria-label="Resultado de bootstrap">
+  <strong>Workspace preparado.</strong>
+  Se crearon/validaron {{ bootstrap_result.created_tool_workspace_count }} workspaces de herramientas documentadas para {{ bootstrap_result.module_id }} sin ejecución implícita.
+</section>
+{% endif %}
+
+<section class="detail-dashboard" aria-label="Estado de workspace">
+  <article class="card detail-panel">
+    <h2>Estado del módulo</h2>
+    <dl class="detail-list">
+      <dt>Ruta raíz</dt><dd>{{ workspace_state.root_path }}</dd>
+      <dt>Manifest</dt><dd>{{ workspace_state.manifest_path }}</dd>
+      <dt>Existe</dt><dd>{{ "sí" if workspace_state.workspace_exists else "no" }}</dd>
+      <dt>Manifest existe</dt><dd>{{ "sí" if workspace_state.manifest_exists else "no" }}</dd>
+    </dl>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Bootstrap seguro</h2>
+    <p class="muted">Crea únicamente carpetas y manifests estructurales para el módulo y sus herramientas documentadas.</p>
+    <form method="post" action="/modules/{{ module.module_id }}/workspace/bootstrap">
+      <button type="submit">Preparar workspace del módulo</button>
+    </form>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Inventario esperado</h2>
+    <dl class="detail-list">
+      <dt>Herramientas doc.</dt><dd>{{ documented_tools|length }}</dd>
+      <dt>Workspaces tool</dt><dd>{{ workspace_state.tool_count }}</dd>
+      <dt>Runs detectados</dt><dd>{{ workspace_state.run_count }}</dd>
+      <dt>Ejecución</dt><dd>no implícita</dd>
+    </dl>
+  </article>
+</section>
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Tool workspaces</h2>
+      <p class="muted">Estado real de carpetas y manifests de herramientas bajo el workspace del módulo.</p>
+    </div>
+    <a class="api-link" href="/api/modules/{{ module.module_id }}/workspace/state">Abrir JSON</a>
+  </div>
+  {% if workspace_state.tools %}
+  <div class="workspace-table" role="table" aria-label="Tool workspaces del módulo">
+    <div class="workspace-table-row workspace-table-head" role="row">
+      <span role="columnheader">Tool</span>
+      <span role="columnheader">Manifest</span>
+      <span role="columnheader">Runs</span>
+      <span role="columnheader">Ruta</span>
+    </div>
+    {% for tool in workspace_state.tools %}
+    <div class="workspace-table-row" role="row">
+      <span role="cell"><strong>{{ tool.tool_id }}</strong></span>
+      <span role="cell">{{ "sí" if tool.manifest_exists else "no" }}</span>
+      <span role="cell">{{ tool.run_count }}</span>
+      <span role="cell">{{ tool.root_path }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="notice">No hay tool workspaces creados todavía. Usa el bootstrap seguro para preparar la estructura.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Herramientas documentadas pendientes de workspace</h2>
+      <p class="muted">La diferencia entre este inventario y los workspaces creados marca qué falta preparar en disco.</p>
+    </div>
+  </div>
+  {% if documented_tools %}
+  <div class="compact-list">
+    {% for tool in documented_tools %}
+    {% if loop.index <= 20 %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ tool.display_name }}</strong>
+        <p>{{ tool.tool_id }} · {{ tool.workspace_path }}</p>
+      </div>
+      <span class="status-badge badge-muted">{{ tool.approved_status }}</span>
+    </article>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% if documented_tools|length > 20 %}
+  <p class="muted">Mostrando 20 de {{ documented_tools|length }} herramientas/capacidades documentadas.</p>
+  {% endif %}
+  {% else %}
+  <p class="notice">Este módulo no tiene herramientas documentadas.</p>
+  {% endif %}
+</section>
+{% endblock %}

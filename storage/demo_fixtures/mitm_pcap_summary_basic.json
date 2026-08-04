@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "mitm_pcap_summary",
+  "summary": "Local demo packet capture summary with synthetic traffic metadata.",
+  "items": []
+}

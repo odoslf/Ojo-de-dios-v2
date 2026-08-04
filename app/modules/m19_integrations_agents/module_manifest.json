@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "module_number": 19,
+  "module_id": "m19_integrations_agents",
+  "slug": "integrations-agents",
+  "display_name": "Auditoría de Seguridad en Sistemas de IA",
+  "description": "Reserved laboratory for AI security assessment across infrastructure, models and AI-enabled applications.",
+  "lifecycle": "reserved",
+  "readiness": "reserved_future_module",
+  "official": false,
+  "reserved": true,
+  "requires_user_definition": true,
+  "doc_path": null,
+  "workspace_path": "storage/workspaces/m19_integrations_agents",
+  "notes": [
+    "Reserved module: definition provided by operator; no executable techniques, tools or workers are implied yet."
+  ]
+}

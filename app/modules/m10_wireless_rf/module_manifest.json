@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "module_number": 10,
+  "module_id": "m10_wireless_rf",
+  "slug": "wireless-rf",
+  "display_name": "Wireless / RF general",
+  "description": "Wireless and RF general workflows for WiFi, BLE, RFID/NFC, Zigbee, Z-Wave and radio evidence surfaces.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/10_WIFI_BLUETOOTH.md",
+  "workspace_path": "storage/workspaces/m10_wireless_rf",
+  "notes": []
+}

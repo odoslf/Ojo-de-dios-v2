@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "module_number": 6,
+  "module_id": "m06_mitm_network",
+  "slug": "mitm-network",
+  "display_name": "MITM / Red",
+  "description": "Network, interface, PCAP, tunnel and integrated DNS evidence workflows.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/06_MITM_NETWORK.md",
+  "workspace_path": "storage/workspaces/m06_mitm_network",
+  "notes": []
+}

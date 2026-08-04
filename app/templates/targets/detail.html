@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}Objetivo {{ target.target_id }} · Ojo de Dios{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Detalle de objetivo</h1>
+  <dl class="detail-list">
+    <dt>target_id</dt>
+    <dd>{{ target.target_id }}</dd>
+    <dt>name</dt>
+    <dd>{{ target.name }}</dd>
+    <dt>target_type</dt>
+    <dd>{{ target.target_type }}</dd>
+    <dt>value</dt>
+    <dd>{{ target.value }}</dd>
+    <dt>normalized_value</dt>
+    <dd>{{ target.normalized_value }}</dd>
+    <dt>mode</dt>
+    <dd>{{ target.mode }}</dd>
+    <dt>created_at</dt>
+    <dd>{{ target.created_at }}</dd>
+  </dl>
+</section>
+
+<section class="card">
+  <h2>Latest fingerprint</h2>
+  {% if fingerprint %}
+  <dl class="detail-list">
+    <dt>normalized_value</dt>
+    <dd>{{ fingerprint.normalized_value }}</dd>
+    <dt>tags</dt>
+    <dd>{{ fingerprint.tags | join(", ") }}</dd>
+    <dt>confidence</dt>
+    <dd>{{ fingerprint.confidence }}</dd>
+  </dl>
+  {% else %}
+  <p class="notice">No hay fingerprint registrado todavía.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Plan X5 runtime</h2>
+  <dl class="detail-list">
+    <dt>Estado</dt>
+    <dd>{{ plan.status }}</dd>
+    <dt>Motivo</dt>
+    <dd>{{ plan.reason }}</dd>
+    <dt>Técnicas runtime</dt>
+    <dd>{{ runtime_registry.technique_count }}</dd>
+    <dt>Registry ready</dt>
+    <dd>{{ "sí" if runtime_registry.ready else "no" }}</dd>
+  </dl>
+  {% if plan.steps %}
+  <div class="compact-list">
+    {% for step in plan.steps %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ step.technique_id }}</strong>
+        <p>{{ step.display_name }} · {{ step.reason }}</p>
+      </div>
+      <span class="status-badge">{{ "ready" if step.can_run_now else step.blocked_reason }}</span>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="notice">No hay técnicas runtime registradas para este objetivo todavía.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>M01 · DNS pasivo para este objetivo</h2>
+  <p class="muted">Disponible para objetivos de tipo dominio o URL. Guarda evidencia dentro del workspace del objetivo y no realiza escaneo de puertos, crawling ni fuerza bruta.</p>
+  <form method="post" action="/targets/{{ target.target_id }}/m01/passive-dns">
+    <label class="inline-option">
+      <input name="include_external" type="checkbox" value="true">
+      Añadir RDAP público y Certificate Transparency sin tocar la web objetivo
+    </label>
+    <button class="primary-action" type="submit">Ejecutar DNS pasivo M01</button>
+  </form>
+  <div class="secondary-actions">
+    <a class="secondary-action" href="/api/targets/{{ target.target_id }}/m01/ai-context">Contexto M01 para LaIA/Mistral</a>
+    <a class="secondary-action" href="/api/targets/{{ target.target_id }}/m01/ai-prompt">Prompt M01 para Mistral local</a>
+    <a class="secondary-action" href="/api/targets/{{ target.target_id }}/m01/laia-reviews">Revisiones LaIA guardadas</a>
+    <a class="secondary-action" href="/api/targets/{{ target.target_id }}/m01/action-plan">Plan M01 derivado de evidencia</a>
+    <a class="secondary-action" href="/api/targets/{{ target.target_id }}/m01/action-board">Tablero M01 de operador</a>
+  </div>
+  {% if m01_passive_dns_error %}
+  <p class="notice warning-notice">{{ m01_passive_dns_error }}</p>
+  {% endif %}
+
+  <form method="post" action="/targets/{{ target.target_id }}/m01/laia-review">
+    <label class="inline-option">
+      <input name="execute_local_ai" type="checkbox" value="true">
+      Confirmo ejecutar Mistral local sobre la evidencia M01 guardada
+    </label>
+    <button class="secondary-action" type="submit">Ejecutar revisión LaIA/Mistral local</button>
+  </form>
+  {% if m01_laia_review_error %}
+  <p class="notice warning-notice">{{ m01_laia_review_error }}</p>
+  {% endif %}
+  {% if m01_laia_review_success %}
+  <p class="notice success-notice">{{ m01_laia_review_success }}</p>
+  {% endif %}
+  <form method="post" action="/targets/{{ target.target_id }}/m01/action-plan/write">
+    <button class="secondary-action" type="submit">Actualizar y guardar plan M01</button>
+  </form>
+  {% if m01_action_plan_success %}
+  <p class="notice success-notice">{{ m01_action_plan_success }}</p>
+  {% endif %}
+  {% if m01_passive_dns_result %}
+  <dl class="detail-list">
+    <dt>Dominio</dt><dd>{{ m01_passive_dns_result.domain }}</dd>
+    <dt>Estado</dt><dd>{{ m01_passive_dns_result.snapshot.status }}</dd>
+    <dt>Artifact</dt><dd>{{ m01_passive_dns_result.artifact_path }}</dd>
+    <dt>Reporte</dt><dd>{{ m01_passive_dns_result.report_path }}</dd>
+    <dt>Hallazgos</dt><dd>{{ m01_passive_dns_result.finding_count }} · {{ m01_passive_dns_result.findings_path }}</dd>
+    <dt>Scope</dt><dd>{{ m01_passive_dns_result.execution_scope }}</dd>
+    <dt>Fuentes externas pasivas</dt><dd>{{ m01_passive_dns_result.snapshot.external_sources|length }}</dd>
+    <dt>Notas</dt><dd>{{ m01_passive_dns_result.snapshot.assessment.exposure_notes|join(" · ") if m01_passive_dns_result.snapshot.assessment else "sin lectura" }}</dd>
+  </dl>
+  {% if m01_passive_dns_result.findings %}
+  <div class="compact-list">
+    {% for finding in m01_passive_dns_result.findings %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ finding.severity }} · {{ finding.title }}</strong>
+        <p>{{ finding.description }}</p>
+        <p class="muted">{{ finding.recommendation }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endif %}
+
+
+  {% if m01_laia_reviews %}
+  <h3>Revisiones LaIA/Mistral guardadas</h3>
+  <div class="compact-list">
+    {% for review in m01_laia_reviews %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ review.model }} · {{ review.created_at }}</strong>
+        <p class="muted">{{ review.path }} · {{ review.parse_status }}</p>
+        <p>{{ review.parsed_content.summary if review.parsed_content and review.parsed_content.summary else review.content }}</p>
+        {% if review.parsed_content and review.parsed_content.recommended_next_steps %}
+        <ul>
+          {% for step in review.parsed_content.recommended_next_steps %}<li>{{ step }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if m01_action_plan.steps %}
+  <h3>Plan de trabajo M01</h3>
+  <p class="muted">Derivado únicamente de evidencia guardada y de revisiones LaIA/Mistral que se hayan podido interpretar. No ejecuta técnicas por sí mismo.</p>
+  <div class="compact-list">
+    {% for step in m01_action_plan.steps %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ step.priority }} · {{ step.title }}</strong>
+        <p>{{ step.instruction }}</p>
+        <p class="muted">{{ step.action_type }} · {{ step.source }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if m01_action_progress_error %}
+  <p class="notice warning-notice">{{ m01_action_progress_error }}</p>
+  {% endif %}
+  {% if m01_action_progress_success %}
+  <p class="notice success-notice">{{ m01_action_progress_success }}</p>
+  {% endif %}
+  {% if m01_action_board.steps %}
+  <h3>Seguimiento de trabajo M01</h3>
+  <p class="muted">Registra decisiones del operador. Cambiar el estado no lanza ninguna técnica ni realiza actividad sobre el objetivo.</p>
+  <div class="compact-list">
+    {% for item in m01_action_board.steps %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ item.progress.status }} · {{ item.title }}</strong>
+        {% if item.progress.note %}<p>{{ item.progress.note }}</p>{% endif %}
+        <form method="post" action="/targets/{{ target.target_id }}/m01/action-board/progress">
+          <input name="step_id" type="hidden" value="{{ item.step_id }}">
+          <label>Estado
+            <select name="status">
+              {% for value in ["pending", "in_progress", "completed", "dismissed"] %}
+              <option value="{{ value }}" {% if item.progress.status == value %}selected{% endif %}>{{ value }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Nota (obligatoria al completar o descartar)
+            <input name="note" type="text" value="{{ item.progress.note }}" maxlength="4000">
+          </label>
+          <button class="secondary-action" type="submit">Guardar estado</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if m01_passive_dns_history %}
+  <h3>Historial M01 guardado</h3>
+  <div class="compact-list">
+    {% for entry in m01_passive_dns_history %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ entry.domain }} · {{ entry.status }}</strong>
+        <p class="muted">Snapshot: {{ entry.artifact_path }}</p>
+        <p>Hallazgos: {{ entry.finding_count }} · Fuentes externas: {{ entry.external_source_count }} · Ejecutado: {{ entry.checked_at or entry.updated_at }}</p>
+        {% if entry.report_path %}<p class="muted">Reporte: {{ entry.report_path }}</p>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Flujo producto · selección y ejecución</h2>
+  <p class="muted">Ejecuta solo técnicas que X5 marca como listas para este objetivo. Las técnicas bloqueadas se muestran arriba pero no se envían al JobRunner.</p>
+  <div class="disabled-actions" aria-label="Acciones de planificación">
+    <a class="api-link" href="/api/targets/{{ target.target_id }}/plan">Planificar · Plan JSON</a>
+    <a class="api-link" href="/api/targets/{{ target.target_id }}/workspace">Workspace JSON</a>
+    <a class="api-link" href="/api/targets/{{ target.target_id }}/jobs">Historial jobs JSON</a>
+  </div>
+  {% if product_flow_error %}
+  <p class="notice warning-notice">{{ product_flow_error }}</p>
+  {% endif %}
+  {% if plan.runnable_steps %}
+  <form method="post" action="/targets/{{ target.target_id }}/start">
+    <label for="mode">Modo de ejecución</label>
+    <select id="mode" name="mode">
+      <option value="dry_run" {% if target.mode == "dry_run" %}selected{% endif %}>dry_run · valida metadata sin efectos</option>
+      <option value="controlled" {% if target.mode == "controlled" %}selected{% endif %}>controlled · ejecuta técnicas con permisos satisfechos</option>
+      <option value="demo">demo · sin ejecución real</option>
+    </select>
+    <label class="checkbox-label" for="confirmed">
+      <input id="confirmed" name="confirmed" type="checkbox" checked> Confirmo alcance y permisos del objetivo
+    </label>
+    <label class="checkbox-label" for="allowlisted_target">
+      <input id="allowlisted_target" name="allowlisted_target" type="checkbox" checked> El objetivo está allowlisted
+    </label>
+    <div class="compact-list" aria-label="Técnicas listas seleccionables">
+      {% for step in plan.runnable_steps %}
+      <article class="compact-row">
+        <div>
+          <label class="checkbox-label">
+            <input name="selected_techniques" type="checkbox" value="{{ step.technique_id }}" checked>
+            <strong>{{ step.technique_id }}</strong>
+          </label>
+          <p>{{ step.display_name }} · módulo {{ step.module_id }} · {{ step.permission_level }}</p>
+        </div>
+        <span class="status-badge">ready</span>
+      </article>
+      {% endfor %}
+    </div>
+    <button class="primary-action" type="submit">Iniciar job seleccionado</button>
+  </form>
+  {% else %}
+  <p class="notice">No hay técnicas listas para ejecutar con el modo/permisos actuales. Ajusta módulos permitidos o revisa inputs requeridos en el plan.</p>
+  {% endif %}
+  {% if product_flow_result %}
+  <h3>Resultado del último inicio desde esta pantalla</h3>
+  <dl class="detail-list">
+    <dt>execution_started</dt><dd>{{ product_flow_result.execution_started }}</dd>
+    {% if product_flow_result.job %}
+    <dt>job_id</dt><dd>{{ product_flow_result.job.job_id }}</dd>
+    <dt>status</dt><dd>{{ product_flow_result.job.status }}</dd>
+    <dt>result_status</dt><dd>{{ product_flow_result.job.result_status }}</dd>
+    <dt>summary</dt><dd>{{ product_flow_result.job.summary }}</dd>
+    {% endif %}
+    {% if product_flow_result.reason %}<dt>reason</dt><dd>{{ product_flow_result.reason }}</dd>{% endif %}
+    <dt>stored_evidence_count</dt><dd>{{ product_flow_result.stored_evidence_count or 0 }}</dd>
+  </dl>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "module_number": 16,
+  "module_id": "m16_ops_quality",
+  "slug": "ops-quality",
+  "display_name": "Excelencia operativa / Evidence / Calidad / Mantenimiento",
+  "description": "Health, readiness, version lock, evidence quality, runtime cleanup and external export preparation.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/16_EVIDENCE_OPS.md",
+  "workspace_path": "storage/workspaces/m16_ops_quality",
+  "notes": [],
+  "implementation_status": {
+    "source": "registry_and_contract_tests",
+    "readiness_status": "READY_READINESS_CHECKS",
+    "documented_technique_count": 1,
+    "implemented_technique_count": 0,
+    "ready_technique_count": 0,
+    "local_ai_technique_count": 0,
+    "implementation_statuses": [],
+    "scope_note": "Tracks real code implemented in roadmap rounds; catalog readiness remains unchanged unless module catalog policy changes."
+  }
+}

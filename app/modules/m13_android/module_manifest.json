@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "module_number": 13,
+  "module_id": "m13_android",
+  "slug": "android",
+  "display_name": "Android",
+  "description": "Android assessment workflows, tool contracts, evidence, handoffs and safe closure.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/13_ANDROID.md",
+  "workspace_path": "storage/workspaces/m13_android",
+  "notes": []
+}
