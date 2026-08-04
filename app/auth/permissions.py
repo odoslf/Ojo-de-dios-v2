@@ -1,0 +1,73 @@
+"""Application permissions for Ojo de Dios."""
+
+from app.auth.roles import ROLE_ADMIN, ROLE_LAB, ROLE_OPERATOR, ROLE_READONLY
+
+PERMISSION_VIEW_DASHBOARD = "view_dashboard"
+PERMISSION_VIEW_REPORTS = "view_reports"
+PERMISSION_VIEW_EVIDENCE = "view_evidence"
+PERMISSION_CREATE_TARGET = "create_target"
+PERMISSION_RUN_ALLOWED_JOBS = "run_allowed_jobs"
+PERMISSION_STOP_JOBS = "stop_jobs"
+PERMISSION_USE_MISTRAL = "use_mistral"
+PERMISSION_USE_X5 = "use_x5"
+PERMISSION_USE_DEMO = "use_demo"
+PERMISSION_CREATE_HERMES_PROPOSAL = "create_hermes_proposal"
+PERMISSION_RUN_STRUCTURAL_TESTS = "run_structural_tests"
+PERMISSION_VIEW_LAB_EVIDENCE = "view_lab_evidence"
+PERMISSION_MANAGE_USERS = "manage_users"
+PERMISSION_MANAGE_SETTINGS = "manage_settings"
+PERMISSION_APPROVE_HERMES = "approve_hermes"
+
+ALL_PERMISSIONS = {
+    PERMISSION_VIEW_DASHBOARD,
+    PERMISSION_VIEW_REPORTS,
+    PERMISSION_VIEW_EVIDENCE,
+    PERMISSION_CREATE_TARGET,
+    PERMISSION_RUN_ALLOWED_JOBS,
+    PERMISSION_STOP_JOBS,
+    PERMISSION_USE_MISTRAL,
+    PERMISSION_USE_X5,
+    PERMISSION_USE_DEMO,
+    PERMISSION_CREATE_HERMES_PROPOSAL,
+    PERMISSION_RUN_STRUCTURAL_TESTS,
+    PERMISSION_VIEW_LAB_EVIDENCE,
+    PERMISSION_MANAGE_USERS,
+    PERMISSION_MANAGE_SETTINGS,
+    PERMISSION_APPROVE_HERMES,
+}
+
+ROLE_PERMISSIONS = {
+    ROLE_ADMIN: set(ALL_PERMISSIONS),
+    ROLE_OPERATOR: {
+        PERMISSION_CREATE_TARGET,
+        PERMISSION_RUN_ALLOWED_JOBS,
+        PERMISSION_STOP_JOBS,
+        PERMISSION_VIEW_EVIDENCE,
+        PERMISSION_USE_MISTRAL,
+        PERMISSION_USE_X5,
+        PERMISSION_VIEW_DASHBOARD,
+        PERMISSION_VIEW_REPORTS,
+    },
+    ROLE_READONLY: {
+        PERMISSION_VIEW_DASHBOARD,
+        PERMISSION_VIEW_REPORTS,
+        PERMISSION_VIEW_EVIDENCE,
+    },
+    ROLE_LAB: {
+        PERMISSION_USE_DEMO,
+        PERMISSION_CREATE_HERMES_PROPOSAL,
+        PERMISSION_RUN_STRUCTURAL_TESTS,
+        PERMISSION_VIEW_LAB_EVIDENCE,
+        PERMISSION_VIEW_DASHBOARD,
+    },
+}
+
+
+def get_permissions_for_role(role: str) -> set[str]:
+    """Return permissions assigned to a role."""
+    return set(ROLE_PERMISSIONS.get(role, set()))
+
+
+def role_has_permission(role: str, permission: str) -> bool:
+    """Return whether a role has a permission."""
+    return permission in ROLE_PERMISSIONS.get(role, set())

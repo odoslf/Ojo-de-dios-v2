@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Centro M16 · Ojo de Dios{% endblock %}
+{% block page_heading %}Centro M16{% endblock %}
+
+{% block content %}
+<section class="hero-card">
+  <div>
+    <p class="eyebrow">M16 · operación local</p>
+    <h1>Centro de control M16</h1>
+    <p class="lead">Panel de preparación real para Windows, LaIA/Mistral, Hermes Agent, conocimiento local y conexión con M01. Las acciones aquí son locales y auditables.</p>
+    <div class="hero-actions" aria-label="Acciones M16">
+      <a class="primary-action" href="/modules">Abrir aplicación</a>
+      <a class="secondary-action" href="/modules/m01_osint/passive-dns">Probar M01 DNS pasivo</a>
+      <a class="secondary-action" href="/ops/m16/first-run">First-run Windows</a>
+      <a class="secondary-action" href="/api/ops/m16/windows-start-plan">Plan Windows JSON</a>
+    </div>
+  </div>
+  <div class="metric-grid" aria-label="Estado M16">
+    <div class="metric"><span>{{ readiness.status }}</span><small>estado M16</small></div>
+    <div class="metric"><span>{{ readiness.components|length }}</span><small>checks</small></div>
+    <div class="metric"><span>{{ knowledge_status.status }}</span><small>conocimiento</small></div>
+  </div>
+</section>
+
+{% if action_result %}
+<section class="notice success-notice" role="status">
+  <strong>{{ action_result.status }}</strong>
+  <p>{{ action_result.message }}</p>
+</section>
+{% endif %}
+
+<section class="detail-dashboard" aria-label="Acciones seguras M16">
+  <article class="card detail-panel">
+    <h2>Arranque Windows desde ZIP de GitHub</h2>
+    <p>Descarga el ZIP desde GitHub, extráelo en Windows y ejecuta este BAT dentro de la carpeta extraída para preparar Python, instalar dependencias y abrir la web local:</p>
+    <pre><code>scripts\windows\iniciar_ojo_de_dios_windows.bat</code></pre>
+    <p class="muted">El instalador IA/Hermes sigue separado: <code>scripts\windows\ia\instalar_modulo16_completo.bat</code>.</p>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Readiness auditable</h2>
+    <p>Guarda el estado actual en <code>storage/runtime/m16_readiness_status.json</code> sin exponer secretos.</p>
+    <form method="post" action="/ops/m16/readiness/write">
+      <button class="primary-action" type="submit">Guardar readiness M16</button>
+    </form>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Conocimiento local</h2>
+    <p>Construye la base docs-only para LaIA/Hermes desde documentación y código del repo, sin descargar modelos ni llamar APIs externas.</p>
+    <form method="post" action="/ops/m16/knowledge/build">
+      <button class="primary-action" type="submit">Construir conocimiento local</button>
+    </form>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Acciones guiadas runtime</h2>
+    <p>Ejecuta operaciones locales auditables: limpieza segura de temporales, re-check inmediato, export JSON y snapshot VersionLock sin resolver versiones externas.</p>
+    <div class="hero-actions" aria-label="Botones operativos M16">
+      <form method="post" action="/ops/m16/actions/clean_runtime"><button class="secondary-action" type="submit">Limpiar runtime</button></form>
+      <form method="post" action="/ops/m16/actions/force_recheck"><button class="secondary-action" type="submit">Forzar re-check</button></form>
+      <form method="post" action="/ops/m16/actions/export_readiness"><button class="secondary-action" type="submit">Exportar</button></form>
+      <form method="post" action="/ops/m16/actions/version_lock"><button class="secondary-action" type="submit">Version-lock</button></form>
+    </div>
+  </article>
+</section>
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Manifiesto de estación Windows</h2>
+      <p class="muted">Mapa real de scripts, fuentes oficiales, reglas de trabajo y archivos requeridos antes de sacar el ZIP al PC.</p>
+    </div>
+    <a class="api-link" href="/api/ops/m16/windows-station-manifest">JSON</a>
+  </div>
+  <dl class="detail-list">
+    <dt>Modelo Mistral</dt><dd>{{ station_manifest.model.official_mistral_model }}</dd>
+    <dt>Descarga Ollama</dt><dd>{{ station_manifest.model.ollama_windows_download_url }}</dd>
+    <dt>Hermes Agent</dt><dd>{{ station_manifest.hermes_agent.repository_url }}</dd>
+    <dt>Workspace Hermes</dt><dd>{{ station_manifest.hermes_agent.workspace }}</dd>
+    <dt>ZIP GitHub soportado</dt><dd>{{ "sí" if station_manifest.github_zip_supported else "no" }}</dd>
+    <dt>Exportador local obligatorio</dt><dd>{{ "sí" if station_manifest.local_exporter_required else "no" }}</dd>
+  </dl>
+  <div class="compact-list">
+    {% for item in station_manifest.files %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ item.path }}</strong>
+        <p>{{ item.purpose }}</p>
+      </div>
+      <span class="status-badge {% if not item.exists %}badge-muted{% endif %}">{{ "OK" if item.exists else "FALTA" }}</span>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Alertas e historial readiness</h2>
+      <p class="muted">Historial local JSONL generado al guardar readiness; las alertas se derivan automáticamente de estados degradados.</p>
+    </div>
+    <a class="api-link" href="/api/ops/m16/readiness/history">JSON</a>
+  </div>
+  <dl class="detail-list">
+    <dt>Observaciones</dt><dd>{{ readiness_history.history_count if readiness_history else 0 }}</dd>
+    <dt>Alertas</dt><dd>{{ readiness_history.alert_count if readiness_history else 0 }}</dd>
+  </dl>
+  {% if readiness_history and readiness_history.alerts %}
+  <div class="status-list">
+    {% for alert in readiness_history.alerts[-5:] %}
+    <article class="status-row status-{{ alert.status|lower|replace('_', '-') }}">
+      <div>
+        <strong>{{ alert.severity }} · {{ alert.component or "overall" }}</strong>
+        <p>{{ alert.message }}</p>
+      </div>
+      <span class="status-badge">{{ alert.status }}</span>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">Sin alertas persistidas todavía. Pulsa “Guardar readiness M16” para registrar una observación.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Checks M16</h2>
+      <p class="muted">Lectura local. No instala modelos, no llama a DeepSeek y no ejecuta herramientas ofensivas.</p>
+    </div>
+    <a class="api-link" href="/api/ops/m16/readiness">JSON</a>
+  </div>
+  <div class="status-list">
+    {% for component in readiness.components %}
+    <article class="status-row status-{{ component.status|lower|replace('_', '-') }}">
+      <div>
+        <strong>{{ component.name }}</strong>
+        <p>{{ component.message }}</p>
+      </div>
+      <span class="status-badge">{{ component.status }}</span>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

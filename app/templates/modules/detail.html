@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.display_name }} · Ojo de Dios{% endblock %}
+{% block page_heading %}{{ module.display_name }}{% endblock %}
+
+{% block content %}
+<section class="module-detail-hero {% if module.reserved %}module-detail-reserved{% endif %}">
+  <div>
+    <p class="eyebrow">M{{ "%02d"|format(module.module_number) }} · {{ module.module_id }}</p>
+    <h1>{{ module.display_name }}</h1>
+    <p class="lead">{{ module.description }}</p>
+    <div class="hero-actions" aria-label="Acciones del módulo">
+      <a class="primary-action" href="/modules/{{ module.module_id }}/workspace">Abrir workspace</a>
+      <a class="secondary-action" href="/api/modules/{{ module.module_id }}/install-plan">Install plan JSON</a>
+      <a class="secondary-action" href="/api/ai/modules/{{ module.module_id }}/prompt-envelope">LaIA envelope</a>
+      {% if module.module_id == "m01_osint" %}<a class="secondary-action" href="/modules/m01_osint/passive-dns">DNS pasivo</a>{% endif %}
+    </div>
+  </div>
+  <div class="module-detail-metrics" aria-label="Resumen del módulo">
+    <div class="metric"><span>{{ techniques|length }}</span><small>técnicas</small></div>
+    <div class="metric"><span>{{ documented_tools|length }}</span><small>herramientas</small></div>
+    <div class="metric"><span>{{ install_plan.ready_count }}</span><small>instalables</small></div>
+    <div class="metric"><span>{{ workspace_state.run_count }}</span><small>runs preparados</small></div>
+    <div class="metric"><span>{{ implementation_status.ready_technique_count }}</span><small>técnicas ready reales</small></div>
+  </div>
+</section>
+
+<section class="detail-dashboard" aria-label="Estado operativo del módulo">
+  <article class="card detail-panel">
+    <h2>Identidad</h2>
+    <dl class="detail-list">
+      <dt>Readiness</dt><dd>{{ module.readiness }}</dd>
+      <dt>Manifest</dt><dd><a href="/api/modules/{{ module.module_id }}/manifest">{{ module.manifest_path }}</a></dd>
+      <dt>Workspace</dt><dd><a href="/modules/{{ module.module_id }}/workspace">{{ module.workspace_path }}</a></dd>
+      <dt>Documento</dt><dd>{% if module.doc_path %}{{ module.doc_path }}{% else %}Pendiente de definición{% endif %}</dd>
+      <dt>Package</dt><dd>{{ module.package }}</dd>
+    </dl>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Workspace</h2>
+    <dl class="detail-list">
+      <dt>Existe</dt><dd>{{ "sí" if workspace_state.workspace_exists else "no" }}</dd>
+      <dt>Manifest</dt><dd>{{ "sí" if workspace_state.manifest_exists else "no" }}</dd>
+      <dt>Tools creadas</dt><dd>{{ workspace_state.tool_count }}</dd>
+      <dt>Runs</dt><dd>{{ workspace_state.run_count }}</dd>
+      <dt>Ruta</dt><dd>{{ workspace_state.root_path }}</dd>
+    </dl>
+    <p class="muted">La inspección no crea carpetas ni ejecuta herramientas.</p>
+  </article>
+
+
+  <article class="card detail-panel">
+    <h2>Implementación real</h2>
+    <dl class="detail-list">
+      <dt>Estado real</dt><dd>{{ implementation_status.readiness_status }}</dd>
+      <dt>Técnicas registradas</dt><dd>{{ implementation_status.implemented_technique_count }} de {{ implementation_status.documented_technique_count }}</dd>
+      <dt>READY</dt><dd>{{ implementation_status.ready_technique_count }}</dd>
+      <dt>IA local</dt><dd>{{ implementation_status.local_ai_technique_count }}</dd>
+      <dt>Package inspeccionado</dt><dd>{{ implementation_status.source_package }}</dd>
+    </dl>
+    <p class="muted">{{ implementation_status.readiness_message }}</p>
+  </article>
+
+  <article class="card detail-panel">
+    <h2>Plan de instalación</h2>
+    <dl class="detail-list">
+      <dt>Pasos</dt><dd>{{ install_plan.count }}</dd>
+      <dt>Ready</dt><dd>{{ install_plan.ready_count }}</dd>
+      <dt>Needs metadata</dt><dd>{{ install_plan.needs_metadata_count }}</dd>
+      <dt>Ejecución</dt><dd>{{ "realizada" if install_plan.execution_performed else "no realizada" }}</dd>
+    </dl>
+    <p class="muted">El plan es revisable; la ejecución exige aprobación explícita en la capa runner.</p>
+  </article>
+</section>
+
+
+{% if module.module_id == "m18_honeypots_deception" %}
+<section class="card" id="m18-ioc-timeline">
+  <div class="section-heading">
+    <div>
+      <h2>Línea de tiempo IOC M18</h2>
+      <p class="muted">Visualización local de IOCs históricos persistidos por la técnica defensiva de scoring. No consulta fuentes externas ni toca actores.</p>
+    </div>
+    <a class="api-link" href="/api/modules/m18_honeypots_deception/ioc-timeline">JSON</a>
+  </div>
+  <dl class="detail-list">
+    <dt>Eventos visibles</dt><dd>{{ m18_ioc_timeline.event_count if m18_ioc_timeline else 0 }}</dd>
+    <dt>Fuente</dt><dd>{{ m18_ioc_timeline.source if m18_ioc_timeline else "sqlite_ioc_history" }}</dd>
+  </dl>
+  {% if m18_ioc_timeline and m18_ioc_timeline.events %}
+  <div class="status-list">
+    {% for event in m18_ioc_timeline.events[:10] %}
+    <article class="status-row status-ready-controlled">
+      <div>
+        <strong>{{ event.timestamp }} · {{ event.event_type }}</strong>
+        <p>{{ event.ioc_type }} · {{ event.value }} · confianza {{ event.confidence_level }} ({{ event.confidence_score }})</p>
+      </div>
+      <span class="status-badge">{{ event.observation_count }} obs</span>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">Sin IOCs históricos persistidos todavía. Ejecuta <code>deception.defensive.historical_ioc_scoring</code> con logs suministrados por el operador para poblar esta línea de tiempo.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="detail-columns">
+  <article id="techniques" class="card">
+    <div class="section-heading">
+      <div>
+        <h2>Técnicas conectadas</h2>
+        <p class="muted">Entradas reales extraídas de los documentos oficiales del módulo.</p>
+      </div>
+      <a class="api-link" href="/api/modules/{{ module.module_id }}/techniques">JSON</a>
+    </div>
+    {% if techniques %}
+    <div class="compact-list">
+      {% for technique in techniques %}
+      {% if loop.index <= 18 %}
+      <article class="compact-row">
+        <div>
+          <strong>{{ technique.technique_id }}</strong>
+          <p>{{ technique.title }}</p>
+        </div>
+        <a href="/api/modules/{{ module.module_id }}/techniques/{{ technique.technique_id }}/workspace">Workspace API</a>
+      </article>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% if techniques|length > 18 %}
+    <p class="muted">Mostrando 18 de {{ techniques|length }} técnicas. Usa el JSON para la lista completa.</p>
+    {% endif %}
+    {% else %}
+    <p class="notice">Este módulo todavía no tiene técnicas declaradas.</p>
+    {% endif %}
+  </article>
+
+  <article id="tools" class="card">
+    <div class="section-heading">
+      <div>
+        <h2>Herramientas/capacidades</h2>
+        <p class="muted">Inventario real del módulo; no implica instalación ni ejecución.</p>
+      </div>
+      <a class="api-link" href="/api/modules/{{ module.module_id }}/documented-tools">JSON</a>
+    </div>
+    {% if documented_tools %}
+    <div class="compact-list">
+      {% for tool in documented_tools %}
+      {% if loop.index <= 14 %}
+      <article class="compact-row">
+        <div>
+          <strong>{{ tool.display_name }}</strong>
+          <p>{{ tool.tool_id }} · {{ tool.runtime }} · {{ tool.approved_status }}</p>
+        </div>
+        <span class="status-badge badge-muted">{{ tool.healthcheck_method }}</span>
+      </article>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% if documented_tools|length > 14 %}
+    <p class="muted">Mostrando 14 de {{ documented_tools|length }} herramientas/capacidades.</p>
+    {% endif %}
+    {% else %}
+    <p class="notice">No hay herramientas documentadas para este módulo.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Manifest validado</h2>
+      <p class="muted">Vista compacta del manifest físico cargado desde el paquete del módulo.</p>
+    </div>
+    <a class="api-link" href="/api/modules/{{ module.module_id }}/manifest">Abrir JSON</a>
+  </div>
+  <dl class="detail-list">
+    <dt>module_id</dt><dd>{{ manifest.module_id }}</dd>
+    <dt>module_number</dt><dd>{{ manifest.module_number }}</dd>
+    <dt>display_name</dt><dd>{{ manifest.display_name }}</dd>
+    <dt>readiness</dt><dd>{{ manifest.readiness }}</dd>
+  </dl>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo objetivo · Ojo de Dios{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Nuevo objetivo</h1>
+  <p class="notice">Crea el objetivo, guarda su fingerprint inicial y abre el panel real de planificación.</p>
+  <p class="notice">El modo recomendado por defecto es dry_run.</p>
+  <p class="notice">API Android-ready equivalente: <code>/api/targets/create</code>.</p>
+  {% if error %}
+  <p class="notice error-notice">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="/targets/new">
+    <label for="name">Nombre</label>
+    <input id="name" name="name" type="text" required>
+
+    <label for="target_type">Tipo de objetivo</label>
+    <select id="target_type" name="target_type" required>
+      {% for target_type in target_types %}
+      <option value="{{ target_type }}">{{ target_type }}</option>
+      {% endfor %}
+    </select>
+
+    <label for="value">Valor</label>
+    <input id="value" name="value" type="text" required>
+
+    <label for="mode">Modo</label>
+    <select id="mode" name="mode" required>
+      {% for mode in execution_modes %}
+      <option value="{{ mode }}" {% if mode == default_mode %}selected{% endif %}>{{ mode }}</option>
+      {% endfor %}
+    </select>
+
+    <fieldset aria-describedby="allowed-modules-help">
+      <legend>Módulos implementados para este objetivo</legend>
+      <p id="allowed-modules-help" class="help-text">Selecciona módulos con técnicas runtime registradas. El plan X5 posterior solo podrá proponer técnicas de estos módulos.</p>
+      <div class="compact-list">
+        {% for module in selectable_modules %}
+        <label class="checkbox-label">
+          <input name="allowed_modules" type="checkbox" value="{{ module.module_id }}" {% if module.module_id in ["m01_osint", "m03_network_services", "m09_scraping_intelligence", "m12_orchestration", "m15_cloud", "m16_ops_quality", "m18_honeypots_deception"] %}checked{% endif %}>
+          M{{ "%02d"|format(module.module_number) }} · {{ module.display_name }} <code>{{ module.module_id }}</code>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <label for="noise_profile">Perfil de ruido</label>
+    <input id="noise_profile" name="noise_profile" type="text" value="normal">
+
+    <label for="evidence_profile">Perfil de evidencia</label>
+    <input id="evidence_profile" name="evidence_profile" type="text" value="standard">
+
+    <label class="checkbox-label" for="require_confirmations">
+      <input id="require_confirmations" name="require_confirmations" type="checkbox" checked>
+      Requerir confirmaciones
+    </label>
+
+    <button type="submit">Crear objetivo</button>
+  </form>
+</section>
+{% endblock %}

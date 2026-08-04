@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}M01 DNS pasivo · Ojo de Dios{% endblock %}
+{% block page_heading %}M01 · DNS pasivo{% endblock %}
+
+{% block content %}
+<section class="module-detail-hero">
+  <div>
+    <p class="eyebrow">{{ module.module_id }} · flujo seguro</p>
+    <h1>Consulta DNS pasiva</h1>
+    <p class="lead">Resuelve un dominio usando DNS local y guarda evidencia JSON en el workspace M01. No escanea puertos, no hace crawling y no visita la web objetivo.</p>
+    <div class="hero-actions" aria-label="Acciones M01 DNS pasivo">
+      <a class="secondary-action" href="/modules/m01_osint">Volver a M01</a>
+      <a class="secondary-action" href="/api/modules/m01_osint/osint/domain-snapshot">API</a>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Dominio a revisar</h2>
+  <form method="post" action="/modules/m01_osint/passive-dns">
+    <label for="domain">Dominio sin http:// ni rutas</label>
+    <input id="domain" name="domain" type="text" placeholder="example.com" required>
+    <label class="inline-option">
+      <input name="include_external" type="checkbox" value="true" {% if include_external %}checked{% endif %}>
+      Añadir RDAP público y Certificate Transparency sin tocar la web objetivo
+    </label>
+    <button class="primary-action" type="submit">Crear snapshot DNS pasivo</button>
+  </form>
+  <p class="muted">Este flujo es pasivo y limitado a resolución DNS. Para cualquier acción más profunda se requiere scope y aprobación explícita.</p>
+</section>
+
+{% if error %}
+<section class="notice warning-notice" role="alert">
+  <strong>No se pudo procesar el dominio.</strong>
+  <p>{{ error }}</p>
+</section>
+{% endif %}
+
+{% if snapshot %}
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Resultado</h2>
+      <p class="muted">Estado: {{ snapshot.status }} · Artifact: {{ artifact_path }}</p>
+    </div>
+    <span class="status-badge">{{ snapshot.status }}</span>
+  </div>
+  <dl class="detail-list">
+    <dt>Dominio</dt><dd>{{ snapshot.domain }}</dd>
+    <dt>Nombre canónico</dt><dd>{{ snapshot.canonical_name or "no detectado" }}</dd>
+    <dt>Direcciones</dt><dd>{{ snapshot.addresses|join(", ") if snapshot.addresses else "sin resolución" }}</dd>
+    <dt>Guardado en</dt><dd>{{ artifact_path }}</dd>
+    <dt>Escaneo de puertos</dt><dd>no realizado</dd>
+    <dt>Petición web</dt><dd>no realizada</dd>
+    <dt>Fuerza bruta subdominios</dt><dd>no realizada</dd>
+    <dt>Fuentes externas pasivas</dt><dd>{{ snapshot.external_sources|length }}</dd>
+  </dl>
+
+  {% if snapshot.assessment %}
+  <h3>Lectura operativa</h3>
+  <dl class="detail-list">
+    <dt>IPv4</dt><dd>{{ "sí" if snapshot.assessment.has_ipv4 else "no" }}</dd>
+    <dt>IPv6</dt><dd>{{ "sí" if snapshot.assessment.has_ipv6 else "no" }}</dd>
+    <dt>Nameservers</dt><dd>{{ "sí" if snapshot.assessment.has_nameservers else "no" }}</dd>
+    <dt>MX correo</dt><dd>{{ "sí" if snapshot.assessment.has_mail_exchange else "no" }}</dd>
+    <dt>SPF</dt><dd>{{ "sí" if snapshot.assessment.has_spf else "no" }}</dd>
+    <dt>DMARC</dt><dd>{{ "sí" if snapshot.assessment.has_dmarc else "no" }}</dd>
+    <dt>Notas</dt><dd>{{ snapshot.assessment.exposure_notes|join(" · ") }}</dd>
+  </dl>
+  {% endif %}
+
+
+  {% if findings %}
+  <h3>Hallazgos M01</h3>
+  <div class="compact-list">
+    {% for finding in findings %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ finding.severity }} · {{ finding.title }}</strong>
+        <p>{{ finding.description }}</p>
+        <p class="muted">{{ finding.recommendation }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if snapshot.external_sources %}
+  <h3>Fuentes pasivas externas</h3>
+  <div class="compact-list">
+    {% for source in snapshot.external_sources %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ source.source }} · {{ source.status }}</strong>
+        <p class="muted">{{ source.url }}</p>
+        <p>{{ source.summary }}</p>
+        {% if source.error %}<p class="notice warning-notice">{{ source.error }}</p>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <h3>Registros DNS</h3>
+  <div class="compact-list">
+    {% for record in snapshot.records %}
+    <article class="compact-row">
+      <div>
+        <strong>{{ record.record_type }} · {{ record.status }}</strong>
+        <p>{{ record.values|join(", ") if record.values else record.error or "sin respuesta" }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

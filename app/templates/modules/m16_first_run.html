@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}First-run Windows · Ojo de Dios{% endblock %}
+{% block page_heading %}First-run Windows{% endblock %}
+
+{% block content %}
+<section class="hero-card">
+  <div>
+    <p class="eyebrow">ZIP GitHub · preflight local</p>
+    <h1>Comprobación de primer arranque</h1>
+    <p class="lead">Verifica lo necesario para arrancar desde el ZIP de GitHub en Windows: Python, dependencias, rutas, `.env`, permisos y puerto local. No descarga modelos ni llama APIs externas.</p>
+    <div class="hero-actions" aria-label="Acciones first-run">
+      <a class="primary-action" href="/ops/m16">Centro M16</a>
+      <a class="secondary-action" href="/api/ops/m16/first-run">JSON</a>
+    </div>
+  </div>
+  <div class="metric-grid" aria-label="Estado first-run">
+    <div class="metric"><span>{{ first_run.status }}</span><small>estado</small></div>
+    <div class="metric"><span>{{ first_run.checks|length }}</span><small>checks</small></div>
+  </div>
+</section>
+
+{% if action_result %}
+<section class="notice success-notice" role="status">
+  <strong>{{ action_result.status }}</strong>
+  <p>{{ action_result.message }}</p>
+</section>
+{% endif %}
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Guardar estado local</h2>
+      <p class="muted">Escribe `storage/runtime/windows_first_run_status.json` para revisar qué falló o qué está listo.</p>
+    </div>
+  </div>
+  <form method="post" action="/ops/m16/first-run/write">
+    <button class="primary-action" type="submit">Guardar first-run status</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Checks</h2>
+      <p class="muted">Todos los checks son locales. Si algo falla, corrige Windows/Python/rutas y vuelve a ejecutar.</p>
+    </div>
+  </div>
+  <div class="status-list">
+    {% for check in first_run.checks %}
+    <article class="status-row status-{{ check.status|lower }}">
+      <div>
+        <strong>{{ check.name }}</strong>
+        <p>{{ check.message }}</p>
+      </div>
+      <span class="status-badge">{{ check.status }}</span>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

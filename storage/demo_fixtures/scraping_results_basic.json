@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "scraping_results",
+  "summary": "Local demo scraping result with documentation-only content.",
+  "items": []
+}

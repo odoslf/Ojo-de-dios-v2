@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "hermes_proposal",
+  "summary": "Local demo proposal summary with no assistant or external processing.",
+  "items": []
+}

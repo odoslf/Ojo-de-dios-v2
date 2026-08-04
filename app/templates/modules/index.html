@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Módulos · Ojo de Dios{% endblock %}
+{% block page_heading %}Dashboard de módulos{% endblock %}
+
+{% block content %}
+<section class="hero-card">
+  <div>
+    <p class="eyebrow">Catálogo operativo</p>
+    <h1>Módulos de Ojo de Dios</h1>
+    <p class="lead">Panel conectado al catálogo maestro, técnicas documentadas, herramientas inventariadas, workspaces y readiness M16. Las acciones de ejecución siguen requiriendo preflight, scope y aprobación explícita.</p>
+    <div class="hero-actions" aria-label="Acciones principales">
+      <a class="primary-action" href="#module-catalog">Abrir módulos</a>
+      <a class="secondary-action" href="/modules/m01_osint/passive-dns">M01 DNS pasivo</a>
+      <a class="secondary-action" href="/ops/m16">Centro M16</a>
+      <a class="secondary-action" href="#readiness">Revisar readiness</a>
+    </div>
+  </div>
+  <div class="metric-grid" aria-label="Resumen operativo">
+    <div class="metric"><span>{{ official_count }}</span><small>módulos oficiales</small></div>
+    <div class="metric"><span>{{ technique_total }}</span><small>técnicas catalogadas</small></div>
+    <div class="metric"><span>{{ documented_tool_count }}</span><small>herramientas documentadas</small></div>
+    <div class="metric"><span>{{ reserved_count }}</span><small>slots reservados</small></div>
+    <div class="metric"><span>{{ readiness_component_count }}</span><small>checks M16</small></div>
+    <div class="metric"><span>{{ readiness.status }}</span><small>readiness global</small></div>
+    <div class="metric"><span>{{ implementation_summary.ready_technique_count }}</span><small>técnicas reales ready</small></div>
+  </div>
+</section>
+
+<section class="operations-grid" aria-label="Mapa operativo">
+  <article id="techniques" class="operation-card">
+    <span class="operation-kicker">Técnicas</span>
+    <h2>{{ technique_total }} entradas conectadas</h2>
+    <p>Inventario cruzado entre documentos oficiales y clases registradas. Los módulos trabajados muestran cuántas técnicas tienen lógica real READY frente a las que siguen solo documentadas.</p>
+    <a href="/api/modules/techniques/summary">Ver resumen JSON</a>
+  </article>
+  <article id="tools" class="operation-card">
+    <span class="operation-kicker">Herramientas</span>
+    <h2>{{ documented_tool_count }} herramientas/capacidades</h2>
+    <p>Base de instalación y healthchecks por módulo. Los planes de instalación se preparan por API y requieren aprobación antes de ejecutar.</p>
+    <a href="/api/modules/m01_osint/documented-tools">Ejemplo M01 JSON</a>
+  </article>
+  <article id="workspaces" class="operation-card">
+    <span class="operation-kicker">Workspaces</span>
+    <h2>Módulos, técnicas, tools y runs</h2>
+    <p>Los workspaces ya tienen estructura para inputs, outputs, evidencia, reportes y manifests; el shell los expone como área de operación principal.</p>
+    <a href="/api/modules/m01_osint/workspace/state">Estado M01 JSON</a>
+  </article>
+  <article id="runs" class="operation-card">
+    <span class="operation-kicker">Runs</span>
+    <h2>Ejecución controlada</h2>
+    <p>La ejecución real debe pasar por target, scope, worker, herramientas instaladas y registro de artifacts. No hay ejecución implícita desde el dashboard.</p>
+    <a href="/api/modules/m03_network_services/workspace/state">Ver estado operativo</a>
+  </article>
+  <article id="evidence" class="operation-card">
+    <span class="operation-kicker">Evidencia</span>
+    <h2>Artifacts con trazabilidad</h2>
+    <p>Los artifacts JSON se guardan en workspaces con hash y tipo. El siguiente paso de producto es un evidence center visual por target, módulo, técnica y run.</p>
+    <a href="/api/modules/m05_credentials/tool-runs">Runs M05 JSON</a>
+  </article>
+  <article id="settings" class="operation-card">
+    <span class="operation-kicker">Settings</span>
+    <h2>Configuración local</h2>
+    <p>AI, Hermes, Ollama, storage y ejecución se mantienen locales y sanitizados. El primer arranque Windows debe convertir esto en wizard.</p>
+    <a href="/api/health">API health</a>
+  </article>
+</section>
+
+<section id="readiness" class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Readiness M16</h2>
+      <p class="muted">Estado local calculado sin llamadas externas. Problemas detectados: {{ readiness_problem_count }} de {{ readiness_component_count }} checks.</p>
+    </div>
+    <a class="api-link" href="/api/ops/m16/readiness">Ver JSON</a>
+  </div>
+  <div class="status-list">
+    {% for component in readiness.components %}
+    <article class="status-row status-{{ component.status|lower|replace('_', '-') }}">
+      <div>
+        <strong>{{ component.name }}</strong>
+        <p>{{ component.message }}</p>
+      </div>
+      <span class="status-badge">{{ component.status }}</span>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+
+<section id="real-implementation-status" class="card">
+  <div class="section-heading">
+    <div>
+      <h2>Estado real de implementación</h2>
+      <p class="muted">Resumen calculado desde el registry, docs, tools y workspace para M01, M03, M09, M12, M15, M16 y M18; no sale del manifest ni marca éxito ficticio.</p>
+    </div>
+    <span class="status-badge">{{ implementation_summary.ready_technique_count }} ready</span>
+  </div>
+  <div class="status-list">
+    {% for item in implemented_statuses %}
+    <article class="status-row status-{{ item.readiness_status|lower|replace('_', '-') }}">
+      <div>
+        <strong><a href="{{ item.detail_url }}">{{ item.display_name }}</a></strong>
+        <p>{{ item.readiness_message }}</p>
+        <p class="muted">{{ item.implemented_technique_count }}/{{ item.documented_technique_count }} técnicas con clase registrada · {{ item.ready_technique_count }} READY · {{ item.local_ai_technique_count }} IA local · {{ item.documented_tool_count }} tools · workspace {{ "sí" if item.workspace_exists else "no" }}</p>
+      </div>
+      <span class="status-badge">{{ item.readiness_status }}</span>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="module-catalog" class="section-heading catalog-heading">
+  <div>
+    <p class="eyebrow dark">Catálogo maestro</p>
+    <h2>Módulos disponibles</h2>
+    <p class="muted">Cada tarjeta enlaza con sus APIs reales de manifest, técnicas, herramientas, plan de instalación y workspace.</p>
+  </div>
+</section>
+
+<section class="module-grid" aria-label="Módulos disponibles">
+  {% for module in modules %}
+  <article class="module-card {% if module.reserved %}module-reserved{% endif %}">
+    <div class="module-card-header">
+      <span class="module-number">M{{ "%02d"|format(module.module_number) }}</span>
+      <span class="status-badge {% if module.reserved %}badge-muted{% endif %}">{{ module.readiness }}</span>
+    </div>
+    <h2><a href="/modules/{{ module.module_id }}">{{ module.display_name }}</a></h2>
+    <p>{{ module.description }}</p>
+    <dl class="module-meta">
+      <dt>ID</dt><dd><a href="/modules/{{ module.module_id }}">{{ module.module_id }}</a></dd>
+      <dt>Workspace</dt><dd><a href="/modules/{{ module.module_id }}/workspace">{{ module.workspace_path }}</a></dd>
+      <dt>Manifest</dt><dd><a href="/api/modules/{{ module.module_id }}/manifest">JSON</a></dd>
+      <dt>Técnicas</dt><dd><a href="/api/modules/{{ module.module_id }}/techniques">JSON</a></dd>
+      <dt>Tools</dt><dd><a href="/api/modules/{{ module.module_id }}/documented-tools">JSON</a></dd>
+      <dt>Install plan</dt><dd><a href="/api/modules/{{ module.module_id }}/install-plan">JSON</a></dd>
+      <dt>Doc</dt>
+      <dd>{% if module.doc_path %}{{ module.doc_path }}{% else %}Pendiente de definición{% endif %}</dd>
+    </dl>
+    {% if module.reserved %}
+    <p class="warning-text">Reservado: no implica técnicas, tools ni workers hasta que el usuario defina el módulo.</p>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

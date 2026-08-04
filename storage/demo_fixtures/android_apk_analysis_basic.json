@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "android_apk_analysis",
+  "summary": "Local demo APK analysis summary without reading real applications.",
+  "items": []
+}

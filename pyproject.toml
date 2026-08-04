@@ -1,0 +1,9 @@
+[project]
+name = "ojo-de-dios"
+version = "0.1.0"
+description = "Ojo de Dios v0.1 Lab Core"
+requires-python = ">=3.12,<3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

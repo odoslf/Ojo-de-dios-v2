@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "module_number": 5,
+  "module_id": "m05_credentials",
+  "slug": "credentials",
+  "display_name": "Credenciales y Autenticación",
+  "description": "Credential findings, sources, dictionaries, hashes, tickets, redaction and evidence handoff.",
+  "lifecycle": "official",
+  "readiness": "documented",
+  "official": true,
+  "reserved": false,
+  "requires_user_definition": false,
+  "doc_path": "docs/techniques/05_CREDENTIALS.md",
+  "workspace_path": "storage/workspaces/m05_credentials",
+  "notes": []
+}

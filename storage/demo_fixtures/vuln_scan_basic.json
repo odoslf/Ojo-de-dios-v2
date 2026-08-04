@@ -1,0 +1,7 @@
+{
+  "demo": true,
+  "real_execution": false,
+  "fixture_type": "vulnerability_scan",
+  "summary": "Local demo vulnerability scan summary with no tool execution.",
+  "items": []
+}

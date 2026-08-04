@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "module_number": 17,
+  "module_id": "m17_hackrf_sdr",
+  "slug": "hackrf-sdr",
+  "display_name": "Laboratorio de Radiofrecuencia (HackRF One)",
+  "description": "Reserved laboratory for authorized RF security testing with HackRF One, spectrum analysis, Sub-GHz signals, TETRA/TETRAPOL, GSM/LTE, GPS, Bluetooth audio and special signals.",
+  "lifecycle": "reserved",
+  "readiness": "reserved_future_module",
+  "official": false,
+  "reserved": true,
+  "requires_user_definition": true,
+  "doc_path": null,
+  "workspace_path": "storage/workspaces/m17_hackrf_sdr",
+  "notes": [
+    "Reserved module: SDR capability owner; other modules may expose mirrored actions through capability_ref.",
+    "Una capacidad real, múltiples superficies de uso."
+  ]
+}

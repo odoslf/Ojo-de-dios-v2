@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "module_number": 20,
+  "module_id": "m20_future_expansion",
+  "slug": "future-expansion",
+  "display_name": "Laboratorio de Análisis de Vulnerabilidades",
+  "description": "Reserved laboratory for advanced vulnerability analysis in binaries, network services, web applications, smart contracts and mobile or desktop applications.",
+  "lifecycle": "reserved",
+  "readiness": "reserved_future_module",
+  "official": false,
+  "reserved": true,
+  "requires_user_definition": true,
+  "doc_path": null,
+  "workspace_path": "storage/workspaces/m20_future_expansion",
+  "notes": [
+    "Reserved module: definition provided by operator; no executable techniques, tools or workers are implied yet."
+  ]
+}
